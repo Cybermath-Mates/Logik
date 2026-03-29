@@ -68,21 +68,6 @@
             </div>
           </div>
 
-          <!-- Current guess row preview -->
-          <div class="current-guess-area">
-            <div class="panel-title">Aktuální tip</div>
-            <div id="current-row-preview" class="current-row-preview">
-              <div class="slot" data-slot="0"></div>
-              <div class="slot" data-slot="1"></div>
-              <div class="slot" data-slot="2"></div>
-              <div class="slot" data-slot="3"></div>
-              <div class="slot" data-slot="4"></div>
-            </div>
-            <div class="action-buttons">
-              <button id="btn-clear" class="btn btn-secondary" disabled>Vymazat</button>
-              <button id="btn-submit" class="btn btn-primary" disabled>Potvrdit ✓</button>
-            </div>
-          </div>
 
           <!-- Legend -->
           <div class="legend">
@@ -103,6 +88,22 @@
         </div>
       </div>
     </main>
+
+    <!-- Current guess bar (outside side-panel so mobile display:none doesn't kill it) -->
+    <div class="current-guess-area">
+      <div class="panel-title">Aktuální tip</div>
+      <div id="current-row-preview" class="current-row-preview">
+        <div class="slot" data-slot="0"></div>
+        <div class="slot" data-slot="1"></div>
+        <div class="slot" data-slot="2"></div>
+        <div class="slot" data-slot="3"></div>
+        <div class="slot" data-slot="4"></div>
+      </div>
+      <div class="action-buttons">
+        <button id="btn-clear" class="btn btn-secondary" disabled>Vymazat</button>
+        <button id="btn-submit" class="btn btn-primary" disabled>Potvrdit ✓</button>
+      </div>
+    </div>
 
     <!-- Rules Modal -->
     <div id="modal-rules" class="modal-overlay hidden">
