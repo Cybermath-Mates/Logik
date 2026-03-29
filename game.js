@@ -59,11 +59,16 @@ const modalEnd        = $('modal-end');
 const statWins        = $('stat-wins');
 const statLosses      = $('stat-losses');
 
+// ── Mobile detection ─────────────────────────────────────────
+const isMobile = () => window.innerWidth <= 540;
+
 // ── Init ──────────────────────────────────────────────────────
 function init() {
   buildPalette();
+  buildMobilePalette();
   attachHeaderListeners();
   updateStatsDisplay();
+  window.addEventListener('resize', buildMobilePalette);
 
   // Show rules on very first visit
   if (!localStorage.getItem('logik-visited')) {
@@ -72,6 +77,38 @@ function init() {
   } else {
     startNewGame();
   }
+}
+
+// ── Mobile palette (injected into bottom bar) ─────────────────
+function buildMobilePalette() {
+  // Remove any existing mobile palette
+  const existing = document.getElementById('mobile-palette');
+  if (existing) existing.remove();
+
+  if (!isMobile()) return; // desktop: not needed
+
+  const guessArea = document.querySelector('.current-guess-area');
+  if (!guessArea) return;
+
+  const wrap = document.createElement('div');
+  wrap.id = 'mobile-palette';
+  wrap.className = 'mobile-palette';
+
+  COLORS.forEach(c => {
+    const dot = document.createElement('div');
+    dot.className = 'palette-color';
+    dot.dataset.colorMobile = c.id;
+    dot.style.backgroundColor = c.hex;
+    dot.title = c.label;
+    dot.addEventListener('click', () => {
+      selectColor(c.id);
+      // Also highlight in main palette for consistency
+    });
+    wrap.appendChild(dot);
+  });
+
+  // Insert at top of the guess area (before panel title / slots)
+  guessArea.insertBefore(wrap, guessArea.firstChild);
 }
 
 // ── New game ──────────────────────────────────────────────────
@@ -118,9 +155,16 @@ function buildPalette() {
 function selectColor(colorId) {
   state.selectedColor = colorId;
   deselectAllPalette();
+  // Highlight in main palette
   const dot = colorPalette.querySelector(`[data-color="${colorId}"]`);
   if (dot) dot.classList.add('selected');
-  // Update selected dot preview
+  // Highlight in mobile palette
+  const mobileDot = document.querySelector(`#mobile-palette [data-color-mobile="${colorId}"]`);
+  if (mobileDot) {
+    document.querySelectorAll('#mobile-palette .palette-color').forEach(d => d.classList.remove('selected'));
+    mobileDot.classList.add('selected');
+  }
+  // Update selected dot preview (desktop)
   const c = COLORS.find(c => c.id === colorId);
   selectedDot.style.backgroundColor = c.hex;
   selectedDot.style.borderStyle = 'solid';
@@ -129,6 +173,7 @@ function selectColor(colorId) {
 
 function deselectAllPalette() {
   colorPalette.querySelectorAll('.palette-color').forEach(d => d.classList.remove('selected'));
+  document.querySelectorAll('#mobile-palette .palette-color').forEach(d => d.classList.remove('selected'));
 }
 
 // ── Board rendering ───────────────────────────────────────────
@@ -393,6 +438,9 @@ function submitGuess() {
   // Animate the key pegs of the just-submitted row
   animateLastRowKeyPegs();
 
+  // Auto-scroll to active row (important on mobile)
+  scrollToActiveRow();
+
   if (feedback.blacks === CODE_LENGTH) {
     // Win
     setTimeout(() => endGame(true), 450);
@@ -460,6 +508,15 @@ function animateLastRowKeyPegs() {
   keyPegs.forEach((kp, i) => {
     setTimeout(() => kp.classList.add('key-pop'), i * 60);
   });
+}
+
+function scrollToActiveRow() {
+  const activeRow = board.querySelector('.active-row') || board.lastElementChild;
+  if (!activeRow) return;
+  // Small delay to let DOM settle after renderBoard()
+  setTimeout(() => {
+    activeRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
 }
 
 // ── Secret display ─────────────────────────────────────────────

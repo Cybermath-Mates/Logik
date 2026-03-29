@@ -735,75 +735,31 @@ body::before {
 
 /* ========================================
    RESPONSIVE — Phone (≤ 540px)
-   Single column, bottom action bar
+   Full-screen board + bottom action bar
    ======================================== */
 @media (max-width: 540px) {
   /* Header */
-  .header-inner { padding: 0 14px; height: 54px; }
-  .logo-icon    { font-size: 22px; }
-  .logo-text    { font-size: 1.1rem; }
+  .header-inner { padding: 0 14px; height: 52px; }
+  .logo-icon    { font-size: 20px; }
+  .logo-text    { font-size: 1rem; }
   .stats-chip   { display: none; }
-  .btn-ghost    { padding: 7px 12px; font-size: 0.8rem; }
+  .btn-ghost    { padding: 6px 10px; font-size: 0.78rem; }
 
-  /* Main layout: single column, more breathing room */
-  .main { padding: 14px 12px 160px; }
+  /* Main padding: bottom space for the fixed bar */
+  .main { padding: 10px 10px 220px; }
 
-  /* Side panel: stack all cards vertically */
-  .side-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    order: -1;
-  }
+  /* HIDE the entire side panel — everything moves to bottom bar */
+  .side-panel { display: none; }
 
-  /* Hide secret code on mobile (revealed at end anyway) */
-  .secret-code-area { display: none; }
+  /* Full-width single column board */
+  .game-layout { grid-template-columns: 1fr; gap: 0; }
 
-  /* Legend: horizontal compact row */
-  .legend { padding: 12px 14px; }
-  .legend-item {
-    font-size: 0.75rem;
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-
-  /* Color picker: 4-up grid, bigger dots */
-  .color-picker-area { padding: 14px; }
-  .color-palette {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .palette-color { min-height: 44px; }
-
-  /* Current guess: fixed to bottom of screen */
-  .current-guess-area {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 90;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    border-bottom: none;
-    padding: 14px 16px 24px;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
-    background: var(--bg-card);
-    border-top: 1px solid var(--border-strong);
-  }
-
-  /* Slots: bigger touch targets */
-  .current-row-preview { gap: 8px; margin-bottom: 10px; }
-  .slot { width: 44px; height: 44px; }
-
-  /* Board pegs */
-  .board { padding: 10px; gap: 6px; }
-  .board-row { gap: 5px; padding: 7px 6px; }
-  .row-number { font-size: 0.7rem; width: 20px; }
-
-  .peg        { width: 32px; height: 32px; }
-  .peg-hidden { width: 32px; height: 32px; }
-
-  /* Key pegs slightly smaller */
+  /* Board */
+  .board         { padding: 8px; gap: 5px; }
+  .board-row     { gap: 5px; padding: 6px 8px; }
+  .row-number    { font-size: 0.68rem; width: 18px; }
+  .peg           { width: 34px; height: 34px; }
+  .peg-hidden    { width: 34px; height: 34px; }
   .key-pegs {
     grid-template-columns: repeat(3, 10px);
     grid-template-rows: repeat(2, 10px);
@@ -811,16 +767,57 @@ body::before {
   }
   .key-peg { width: 10px; height: 10px; }
 
-  /* Modals: full screen on phone */
+  /* ---- MOBILE BOTTOM BAR ---- */
+  /* Re-purpose the current-guess-area as the full bottom bar */
+  .current-guess-area {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 90;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    border-top: 1px solid var(--border-strong);
+    padding: 12px 16px 28px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Inline color palette inside bottom bar */
+  .mobile-palette {
+    display: grid !important;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+  }
+
+  /* Guess slots row */
+  .current-row-preview {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+  .slot { width: 42px; height: 42px; }
+
+  /* Buttons */
+  .action-buttons { gap: 8px; }
+  .action-buttons .btn { padding: 9px 12px; font-size: 0.82rem; }
+
+  /* Panel title hidden inside bottom bar */
+  .current-guess-area .panel-title { display: none; }
+
+  /* Modals */
   .modal-card {
-    padding: 28px 22px;
+    padding: 24px 18px;
     border-radius: var(--radius-lg);
-    max-height: 90vh;
+    max-height: 88vh;
     overflow-y: auto;
   }
-  .modal-title { font-size: 1.25rem; }
-  .end-emoji   { font-size: 3rem; }
+  .modal-title { font-size: 1.2rem; }
+  .end-emoji   { font-size: 2.8rem; }
 }
+
 
 /* ========================================
    RESPONSIVE — Tiny phones (≤ 375px)
