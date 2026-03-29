@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOGIK – Česká hra dedukce</title>
+  <meta name="description" content="Hrajte LOGIK – českou klasiku deduktivního myšlení. Prolomte tajný kód barevných kuliček v co nejméně tazích!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-icon">🔮</span>
+          <span class="logo-text">LOGIK</span>
+        </div>
+        <div class="header-controls">
+          <button id="btn-new-game" class="btn btn-ghost">Nová hra</button>
+          <button id="btn-rules" class="btn btn-ghost">Pravidla</button>
+          <div class="stats-chip">
+            <span>Výhry: <strong id="stat-wins">0</strong></span>
+            <span class="sep">|</span>
+            <span>Prohry: <strong id="stat-losses">0</strong></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="game-layout">
+
+        <!-- Game board -->
+        <div class="board-container">
+          <div class="board-header">
+            <span class="attempt-label">Pokus <span id="current-attempt">1</span> / 10</span>
+            <span class="code-length-label">Kód: 5 barev</span>
+          </div>
+          <div id="board" class="board"></div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="side-panel">
+          <!-- Secret code (revealed at end) -->
+          <div class="secret-code-area">
+            <div class="panel-title">Tajný kód</div>
+            <div id="secret-display" class="secret-display">
+              <div class="peg-hidden"></div>
+              <div class="peg-hidden"></div>
+              <div class="peg-hidden"></div>
+              <div class="peg-hidden"></div>
+              <div class="peg-hidden"></div>
+            </div>
+          </div>
+
+          <!-- Color picker -->
+          <div class="color-picker-area">
+            <div class="panel-title">Vyber barvu</div>
+            <div id="color-palette" class="color-palette"></div>
+            <div class="selected-display">
+              <span class="selected-label">Vybraná:</span>
+              <div id="selected-color-dot" class="selected-dot"></div>
+            </div>
+          </div>
+
+          <!-- Current guess row preview -->
+          <div class="current-guess-area">
+            <div class="panel-title">Aktuální tip</div>
+            <div id="current-row-preview" class="current-row-preview">
+              <div class="slot" data-slot="0"></div>
+              <div class="slot" data-slot="1"></div>
+              <div class="slot" data-slot="2"></div>
+              <div class="slot" data-slot="3"></div>
+              <div class="slot" data-slot="4"></div>
+            </div>
+            <div class="action-buttons">
+              <button id="btn-clear" class="btn btn-secondary" disabled>Vymazat</button>
+              <button id="btn-submit" class="btn btn-primary" disabled>Potvrdit ✓</button>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="legend">
+            <div class="panel-title">Legenda</div>
+            <div class="legend-item">
+              <div class="key-peg black-key"></div>
+              <span>Správná barva + pozice</span>
+            </div>
+            <div class="legend-item">
+              <div class="key-peg white-key"></div>
+              <span>Správná barva, špatná pozice</span>
+            </div>
+            <div class="legend-item">
+              <div class="key-peg empty-key"></div>
+              <span>Špatná barva</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Rules Modal -->
+    <div id="modal-rules" class="modal-overlay hidden">
+      <div class="modal-card">
+        <button class="modal-close" id="btn-close-rules">×</button>
+        <h2 class="modal-title">🔮 Pravidla hry LOGIK</h2>
+        <div class="modal-body">
+          <p>LOGIK je česká klasická hra dedukce (Mastermind). Tvým cílem je prolomit tajný kód <strong>5 barev</strong> v maximálně <strong>10 pokusech</strong>.</p>
+          <h3>Jak hrát</h3>
+          <ol>
+            <li>Vyber barvu z palety vpravo.</li>
+            <li>Klikni na prázdné pole v aktuálním tipu – nebo přímo na políčko v herním řádku.</li>
+            <li>Vyplň všechna 4 pole a stiskni <strong>Potvrdit</strong>.</li>
+          </ol>
+          <h3>Zpětná vazba</h3>
+          <div class="rule-legend">
+            <div class="legend-item"><div class="key-peg black-key"></div><span><strong>Černá</strong> = správná barva na správném místě</span></div>
+            <div class="legend-item"><div class="key-peg white-key"></div><span><strong>Bílá</strong> = správná barva, ale špatné místo</span></div>
+            <div class="legend-item"><div class="key-peg empty-key"></div><span><strong>Prázdná</strong> = tato barva v kódu není</span></div>
+          </div>
+          <p class="note">💡 Každá barva se v tajném kódu vyskytuje nejvýše jednou! Zpětné piny ti neřeknou, které konkrétní kuličky jsou správně.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-start-from-rules">Začít hrát!</button>
+      </div>
+    </div>
+
+    <!-- End Game Modal -->
+    <div id="modal-end" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="end-emoji" class="end-emoji"></div>
+        <h2 id="end-title" class="modal-title"></h2>
+        <p id="end-subtitle" class="end-subtitle"></p>
+        <div class="revealed-code" id="revealed-code"></div>
+        <button class="btn btn-primary" id="btn-play-again">Hrát znovu</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
